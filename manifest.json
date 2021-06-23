@@ -1,0 +1,37 @@
+{
+  "id": "plugin-liberty",
+  "displayName": "Liberty",
+  "description": "Plugin for integrating data with Liberty",
+  "apiVersion": "2",
+  "versionDescription": "Version 2",
+  "version": "2.0.0",
+  "iconFile": "icon.png",
+  "executable": "PluginLiberty",
+  "kind": "publisher",
+  "os": "$GOOS",
+  "arch": "$GOARCH",
+  "canConfigure": true,
+  "canProduceMultipleSchemas": true,
+  "canAcceptQueryBasedSchemas": false,
+  "canUseOAuth": false,
+  "canWrite": true,
+  "configSchema": {
+    "ui": {
+      "ui:order": [
+        "ApiKey"
+      ]
+    },
+    "schema": {
+      "type": "object",
+      "properties": {
+        "ApiKey" : {
+          "type": "string",
+          "title": "API Key",
+          "description": "API key to use for authentication."
+        }
+      },
+      "required": [
+      ]
+    }
+  }
+}
