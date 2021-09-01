@@ -14,23 +14,54 @@
   "canProduceMultipleSchemas": true,
   "canAcceptQueryBasedSchemas": false,
   "canUseOAuth": false,
-  "canWrite": true,
+  "canWrite": false,
   "configSchema": {
     "ui": {
       "ui:order": [
-        "ApiKey"
-      ]
+        "Username",
+        "Password",
+        "ApiKey",
+        "NPI",
+        "QueryStartDate"
+      ],
+      "Password": {
+        "ui:widget": "password"
+      }
     },
     "schema": {
       "type": "object",
       "properties": {
-        "ApiKey" : {
+        "ApiKey": {
           "type": "string",
           "title": "API Key",
           "description": "API key to use for authentication."
+        },
+        "Username": {
+          "type": "string",
+          "title": "Username",
+          "description": "Username to use for authentication."
+        },
+        "Password": {
+          "type": "string",
+          "title": "Password",
+          "description": "Password to use for authentication."
+        },
+        "NPI": {
+          "type": "string",
+          "title": "NPI",
+          "description": "NPI to use for authentication."
+        },
+        "QueryStartDate": {
+          "type": "string",
+          "title": "Query Start Date",
+          "description": "Query Start Date to use for authentication."
         }
       },
       "required": [
+        "ApiKey",
+        "Username",
+        "Password",
+        "NPI"
       ]
     }
   }

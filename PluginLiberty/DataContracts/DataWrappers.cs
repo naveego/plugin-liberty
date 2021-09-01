@@ -3,8 +3,10 @@ using Newtonsoft.Json;
 
 namespace PluginLiberty.DataContracts
 {
-    public class ObjectResponseWrapper
+    public class PrescriptionResponseWrapper
     {
+        [JsonProperty("Scripts")] 
+        public List<Dictionary<string, object>> Scripts { get; set; }
         [JsonProperty("results")]
         public List<ObjectResponse> Results { get; set; }
         
@@ -12,10 +14,65 @@ namespace PluginLiberty.DataContracts
         public PagingResponse Paging { get; set; }
     }
 
+    public class PatientResponseWrapper
+    {
+        [JsonProperty("")]
+        public List<Dictionary<string, object>> Patient { get; set; }
+
+    }
+
+    public class AccountsReceivableWrapper
+    {
+        [JsonProperty("OwnerPatientId")]
+        public string? OwnerPatientId { get; set; }
+
+        [JsonProperty("AccountNumber")]
+        public int AccountNumber { get; set; }
+
+        [JsonProperty("ChargeCode")]
+        public string? ChargeCode { get; set; }
+
+        [JsonProperty("CreditLimit")]
+        public float CreditLimit { get; set; }
+
+        [JsonProperty("LastPaymentAmount")]
+        public float LastPaymentAmount { get; set; }
+
+        [JsonProperty("LastPaymentDate")]
+        public string? LastPaymentDate { get; set; }
+
+        [JsonProperty("PreviousBalance")]
+        public float PreviousBalance { get; set; }
+
+        [JsonProperty("AmountDue")]
+        public float AmountDue { get; set; }
+
+        [JsonProperty("Over30Days")]
+        public float Over30Days { get; set; }
+
+        [JsonProperty("Over60Days")]
+        public float Over60Days { get; set; }
+
+        [JsonProperty("Over90Days")]
+        public float Over90Days { get; set; }
+
+        [JsonProperty("Over120Days")]
+        public float Over120Days { get; set; }
+
+        [JsonProperty("CurrentDebits")]
+        public float CurrentDebits { get; set; }
+
+        [JsonProperty("CurrentCredits")]
+        public float CurrentCredits { get; set; }
+
+        [JsonProperty("TotalBalance")]
+        public float TotalBalance { get; set; }
+    }
+
     public class ObjectResponse
     {
-        [JsonProperty("id")]
-        public string Id { get; set; }
+        [JsonProperty("ScriptNumber")]
+        public int ScriptNumber { get; set; }
         
         [JsonProperty("properties")]
         public Dictionary<string, object> Properties { get; set; }
@@ -24,8 +81,8 @@ namespace PluginLiberty.DataContracts
 
     public class PropertyResponseWrapper
     {
-        [JsonProperty("results")]
-        public List<PropertyResponse> Results { get; set; }
+        [JsonProperty("Scripts")]
+        public List<Dictionary<string, object>> Scripts {get; set;}
         
         [JsonProperty("paging")]
         public PagingResponse Paging { get; set; }

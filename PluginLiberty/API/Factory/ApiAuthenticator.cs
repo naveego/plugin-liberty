@@ -39,5 +39,18 @@ namespace PluginLiberty.API.Factory
 
             return base64EncodedAuthenticationString;
         }
+        public async Task<string> GetAPINPI()
+        {
+            return await GetAPINPIToken();
+        }
+
+        private async Task<string> GetAPINPIToken()
+        {
+            var authenticationString = $"{Settings.NPI}:{Settings.ApiKey}";
+            var base64EncodedAuthenticationString =
+                Convert.ToBase64String(Encoding.UTF8.GetBytes(authenticationString));
+
+            return base64EncodedAuthenticationString;
+        }
     }
 }

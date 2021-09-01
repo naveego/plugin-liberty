@@ -202,26 +202,6 @@ namespace PluginLiberty.Plugin
 
             Logger.SetLogPrefix("connect");
             
-            // get oAuth State
-            OAuthState oAuthState;
-            OAuthConfig oAuthConfig;
-            try
-            {
-                oAuthState = JsonConvert.DeserializeObject<OAuthState>(request.OauthStateJson);
-                oAuthConfig = JsonConvert.DeserializeObject<OAuthConfig>(oAuthState?.Config ?? "{}");
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, e.Message, context);
-                return new ConnectResponse
-                {
-                    OauthStateJson = request.OauthStateJson,
-                    ConnectionError = "",
-                    OauthError = e.Message,
-                    SettingsError = ""
-                };
-            }
-            
             // validate settings passed in
             try
             {
@@ -350,7 +330,7 @@ namespace PluginLiberty.Plugin
                 var refreshSchemas = request.ToRefresh;
 
                 Logger.Info($"Refresh schemas attempted: {refreshSchemas.Count}");
-
+                //8-12-2021
                 var schemas = Discover.GetRefreshSchemas(_apiClient, refreshSchemas, sampleSize);
 
                 discoverSchemasResponse.Schemas.AddRange(await schemas.ToListAsync());

@@ -19,13 +19,14 @@ namespace PluginLibertyTest.Plugin
     {
         private Settings GetSettings(bool oAuth = false)
         {
-            return oAuth
-                ? new Settings
-                {
-                }
-                : new Settings
+            return 
+                new Settings
                 {
                     ApiKey = "", // add to test
+                    Username = "",
+                    NPI = "",
+                    Password = "",
+                    QueryStartDate = ""
                 };
         }
 
@@ -65,7 +66,7 @@ namespace PluginLibertyTest.Plugin
         private Schema GetTestSchema(string endpointId = null, string id = "test", string name = "test")
         {
             Endpoint endpoint = endpointId == null
-                ? EndpointHelper.GetEndpointForId("AllContacts")
+                ? EndpointHelper.GetEndpointForId("AllAccountsReceivable")
                 : EndpointHelper.GetEndpointForId(endpointId);
 
 
@@ -270,7 +271,7 @@ namespace PluginLibertyTest.Plugin
                 SampleSize = 10,
                 ToRefresh =
                 {
-                    GetTestSchema("ActiveSubscribers")
+                    GetTestSchema()
                 }
             };
 
@@ -352,13 +353,13 @@ namespace PluginLibertyTest.Plugin
             }
 
             // assert
-            Assert.Equal(1002, records.Count);
+            Assert.Equal(1, records.Count);
 
             var record = JsonConvert.DeserializeObject<Dictionary<string, object>>(records[0].DataJson);
-            Assert.Equal("Brisbane", record["city"]);
-            Assert.Equal("HubSpot", record["company"]);
-            Assert.Equal("Maria", record["firstname"]);
-            Assert.Equal("", record["work_email"]);
+            // Assert.Equal("Brisbane", record["city"]);
+            // Assert.Equal("HubSpot", record["company"]);
+            // Assert.Equal("Maria", record["firstname"]);
+            // Assert.Equal("", record["work_email"]);
 
             // cleanup
             await channel.ShutdownAsync();

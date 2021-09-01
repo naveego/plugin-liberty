@@ -66,7 +66,7 @@ namespace PluginLiberty.API.Discover
             }
 
             // invoke properties api
-            var response = await apiClient.GetAsync(endpoint.PropertiesPath);
+            var response = await apiClient.GetAsync(endpoint.AllPath);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -79,29 +79,44 @@ namespace PluginLiberty.API.Discover
                     await response.Content.ReadAsStringAsync());
 
             var properties = new List<Property>();
+            var row = objectPropertiesResponse.Scripts[0];
 
-            foreach (var objectProperty in objectPropertiesResponse.Results)
-            {
-                var propertyMetaJson = new PropertyMetaJson
-                {
-                    Calculated = objectProperty.Calculated,
-                    IsKey = objectProperty.IsKey,
-                    ModificationMetaData = objectProperty.ModificationMetaData
-                };
+            foreach (var key in row)
+            {   
+            // var propertyMetaJson = new PropertyMetaJson
+            // Calculated = objectProperty.Calculated,
+            // IsKey = objectProperty.IsKey,
+            // ModificationMetaData = objectProperty.ModificationMetaData
+             //   };
 
-                properties.Add(new Property
+                switch (key.Key)
                 {
-                    Id = objectProperty.Id,
-                    Name = objectProperty.Name,
-                    Description = objectProperty.Description,
-                    Type = GetPropertyType(objectProperty.Type),
-                    TypeAtSource = objectProperty.Type,
-                    IsKey = objectProperty.IsKey,
-                    IsNullable = !objectProperty.IsKey,
-                    IsCreateCounter = false,
-                    IsUpdateCounter = false,
-                    PublisherMetaJson = JsonConvert.SerializeObject(propertyMetaJson),
-                });
+                case ("Patient"):
+                    properties.Add(new Property
+                    {
+                    Id = "PatientId",
+                    Name = "PatientId",
+                    Description = "",
+                    Type = PropertyType.String,
+                    TypeAtSource = "String",
+                    IsKey = false,
+                    IsNullable = true
+                     });
+                    break;
+                default: 
+                    properties.Add(new Property
+                    {
+                    Id = key.Key,
+                    Name = key.Key,
+                    Description = "",
+                    Type = PropertyType.String,
+                    TypeAtSource = "String",
+                    IsKey = false,
+                    IsNullable = true
+                     });
+                    break;
+                }
+
             }
 
             schema.Properties.Clear();

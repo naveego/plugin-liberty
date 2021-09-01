@@ -1,5 +1,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
+using PluginLiberty.API.Utility;
+using PluginLiberty.Helper;
 
 namespace PluginLiberty.API.Factory
 {
@@ -11,5 +13,6 @@ namespace PluginLiberty.API.Factory
         Task<HttpResponseMessage> PutAsync(string path, StringContent json);
         Task<HttpResponseMessage> PatchAsync(string path, StringContent json);
         Task<HttpResponseMessage> DeleteAsync(string path);
+        Task<string>  GetQueryDate();
     }
 }

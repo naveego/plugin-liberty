@@ -1,13 +1,20 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using Naveego.Sdk.Logging;
+using Newtonsoft.Json;
 using PluginLiberty.API.Utility;
 using PluginLiberty.Helper;
+using RestSharp;
 
 namespace PluginLiberty.API.Factory
 {
@@ -16,6 +23,10 @@ namespace PluginLiberty.API.Factory
         private IApiAuthenticator Authenticator { get; set; }
         private static HttpClient Client { get; set; }
         private Settings Settings { get; set; }
+        public async Task<string> GetQueryDate()
+        {
+            return Settings.QueryStartDate; 
+        }
 
         private const string CustomerHeaderName = "Customer";
 
@@ -32,7 +43,6 @@ namespace PluginLiberty.API.Factory
         {
             try
             {
-                var token = await Authenticator.GetToken();
                 var uriBuilder = new UriBuilder($"{Constants.BaseApiUrl.TrimEnd('/')}/{Utility.Constants.TestConnectionPath.TrimStart('/')}");
                 var query = HttpUtility.ParseQueryString(uriBuilder.Query);
                 
@@ -40,25 +50,24 @@ namespace PluginLiberty.API.Factory
                 
                 var uri = new Uri(uriBuilder.ToString());
                 
+
                 var request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Get,
                     RequestUri = uri,
+                //   Content = new StringContent("", Encoding.UTF8, "application/json")
                 };
+                var key = await Authenticator.GetAPINPI();
+                request.Headers.Add("Customer", key);
+                var token = await Authenticator.GetToken();
+                request.Headers.Add("Authorization", $"Basic {token}");
+                request.Headers.Add("Accept","*/*");
+                // send request
+                var client = new HttpClient();
+                var response = await client.SendAsync(request);
 
-                request.Headers.Authorization = new AuthenticationHeaderValue("Basic", token);
-                
-                var customerString = $"{Settings.NPI}:{Settings.ApiKey}";
-                var base64EncodedCustomerString =
-                    Convert.ToBase64String(Encoding.UTF8.GetBytes(customerString));
-                
-                request.Headers.Add("Customer", base64EncodedCustomerString);
+                response.EnsureSuccessStatusCode();
 
-                var response = await Client.SendAsync(request);
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new Exception(await response.Content.ReadAsStringAsync());
-                }
             }
             catch (Exception e)
             {
@@ -71,7 +80,6 @@ namespace PluginLiberty.API.Factory
         {
             try
             {
-                var token = await Authenticator.GetToken();
                 var uriBuilder = new UriBuilder($"{Constants.BaseApiUrl.TrimEnd('/')}/{path.TrimStart('/')}");
                 var query = HttpUtility.ParseQueryString(uriBuilder.Query);
                 
@@ -85,13 +93,11 @@ namespace PluginLiberty.API.Factory
                     RequestUri = uri,
                 };
 
-                request.Headers.Authorization = new AuthenticationHeaderValue("Basic", token);
-                
-                var customerString = $"{Settings.NPI}:{Settings.ApiKey}";
-                var base64EncodedCustomerString =
-                    Convert.ToBase64String(Encoding.UTF8.GetBytes(customerString));
-                
-                request.Headers.Add("Customer", base64EncodedCustomerString);
+                var key = await Authenticator.GetAPINPI();
+                request.Headers.Add("Customer", key);
+                var token = await Authenticator.GetToken();
+                request.Headers.Add("Authorization", $"Basic {token}");
+                request.Headers.Add("Accept","*/*");
 
                 return await Client.SendAsync(request);
             }
@@ -127,7 +133,7 @@ namespace PluginLiberty.API.Factory
                 var base64EncodedCustomerString =
                     Convert.ToBase64String(Encoding.UTF8.GetBytes(customerString));
                 
-                request.Headers.Add("Customer", base64EncodedCustomerString);
+                request.Headers.Add("Password", base64EncodedCustomerString);
 
                 return await Client.SendAsync(request);
             }
@@ -163,7 +169,7 @@ namespace PluginLiberty.API.Factory
                 var base64EncodedCustomerString =
                     Convert.ToBase64String(Encoding.UTF8.GetBytes(customerString));
                 
-                request.Headers.Add("Customer", base64EncodedCustomerString);
+                request.Headers.Add("ApiKey", base64EncodedCustomerString);
 
                 return await Client.SendAsync(request);
             }
@@ -199,7 +205,7 @@ namespace PluginLiberty.API.Factory
                 var base64EncodedCustomerString =
                     Convert.ToBase64String(Encoding.UTF8.GetBytes(customerString));
                 
-                request.Headers.Add("Customer", base64EncodedCustomerString);
+                request.Headers.Add("NPI", base64EncodedCustomerString);
 
                 return await Client.SendAsync(request);
             }

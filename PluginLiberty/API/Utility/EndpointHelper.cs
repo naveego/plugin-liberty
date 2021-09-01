@@ -20,14 +20,8 @@ namespace PluginLiberty.API.Utility
 
         static EndpointHelper()
         {
-            ContactsEndpointHelper.ContactsEndpoints.ToList().ForEach(x => Endpoints.TryAdd(x.Key, x.Value));
-            CompaniesEndpointHelper.CompaniesEndpoints.ToList().ForEach(x => Endpoints.TryAdd(x.Key, x.Value));
-            DealsEndpointHelper.DealsEndpoints.ToList().ForEach(x => Endpoints.TryAdd(x.Key, x.Value));
-            EngagementsEndpointHelper.EngagementsEndpoints.ToList().ForEach(x => Endpoints.TryAdd(x.Key, x.Value));
-            FeedbackSubmissionsEndpointHelper.FeedbackSubmissionsEndpoints.ToList().ForEach(x => Endpoints.TryAdd(x.Key, x.Value));
-            LineItemsEndpointHelper.LineItemsEndpoints.ToList().ForEach(x => Endpoints.TryAdd(x.Key, x.Value));
-            ProductsEndpointHelper.ProductsEndpoints.ToList().ForEach(x => Endpoints.TryAdd(x.Key, x.Value));
-            TicketsEndpointHelper.TicketsEndpoints.ToList().ForEach(x => Endpoints.TryAdd(x.Key, x.Value));
+            AccountsReceivableEndpointHelper.AccountsReceivableEndpoints.ToList().ForEach(x => Endpoints.TryAdd(x.Key, x.Value));
+            PrescriptionEndpointHelper.PrescriptionEndpoints.ToList().ForEach(x => Endpoints.TryAdd(x.Key, x.Value));
         }
 
         public static Dictionary<string, Endpoint> GetAllEndpoints()
@@ -91,7 +85,7 @@ namespace PluginLiberty.API.Utility
                 response.EnsureSuccessStatusCode();
 
                 var objectResponseWrapper =
-                    JsonConvert.DeserializeObject<ObjectResponseWrapper>(await response.Content.ReadAsStringAsync());
+                    JsonConvert.DeserializeObject<PrescriptionResponseWrapper>(await response.Content.ReadAsStringAsync());
 
                 after = objectResponseWrapper?.Paging?.Next?.After ?? "";
                 hasMore = !string.IsNullOrWhiteSpace(after);
@@ -234,6 +228,11 @@ namespace PluginLiberty.API.Utility
         }
 
         public virtual Task<Schema> GetStaticSchemaAsync(IApiClient apiClient, Schema schema)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual Task<Schema> GetSchemaForEndpoint(IApiClient apiClient, Schema schema)
         {
             throw new NotImplementedException();
         }
