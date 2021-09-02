@@ -11,7 +11,7 @@ using PluginLiberty.Helper;
 
 namespace PluginLiberty.API.Factory
 {
-    public class ApiAuthenticator: IApiAuthenticator
+    public class ApiAuthenticator : IApiAuthenticator
     {
         private HttpClient Client { get; set; }
         private Settings Settings { get; set; }

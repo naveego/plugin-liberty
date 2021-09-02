@@ -59,18 +59,18 @@ namespace PluginLiberty.API.Discover
                                 discoveredTypes[recordKey][PropertyType.Json]++;
                                 break;
                             default:
-                            {
-                                if (DateTime.TryParse(value.ToString(), out DateTime d))
                                 {
-                                    discoveredTypes[recordKey][PropertyType.Datetime]++;
-                                }
-                                else
-                                {
-                                    discoveredTypes[recordKey][PropertyType.String]++;
-                                }
+                                    if (DateTime.TryParse(value.ToString(), out DateTime d))
+                                    {
+                                        discoveredTypes[recordKey][PropertyType.Datetime]++;
+                                    }
+                                    else
+                                    {
+                                        discoveredTypes[recordKey][PropertyType.String]++;
+                                    }
 
-                                break;
-                            }
+                                    break;
+                                }
                         }
                     }
                 }

@@ -18,228 +18,219 @@ namespace PluginLiberty.API.Utility.EndpointHelperEndpoints
     public class PrescriptionEndpointHelper
     {
         private class PrescriptionEndpoint : Endpoint
-        { 
+        {
             public override async Task<Schema> GetStaticSchemaAsync(IApiClient apiClient, Schema schema)
             {
                 var response = await apiClient.GetAsync(AllPath);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = JsonConvert.DeserializeObject<ApiError>(await response.Content.ReadAsStringAsync());
-                throw new Exception(error.Message);
-            }
-
-            var objectPropertiesResponse =
-                JsonConvert.DeserializeObject<PropertyResponseWrapper>(
-                    await response.Content.ReadAsStringAsync());
-
-            var properties = new List<Property>();
-            var row = objectPropertiesResponse.Scripts[0];
-
-            foreach (var key in row)
-            {   
-            // var propertyMetaJson = new PropertyMetaJson
-            // Calculated = objectProperty.Calculated,
-            // IsKey = objectProperty.IsKey,
-            // ModificationMetaData = objectProperty.ModificationMetaData
-             //   };
-
-                switch (key.Key)
+                if (!response.IsSuccessStatusCode)
                 {
-                case ("Patient"):
-                    properties.Add(new Property
-                    {
-                    Id = "PatientId",
-                    Name = "PatientId",
-                    Description = "",
-                    Type = PropertyType.String,
-                    TypeAtSource = "String",
-                    IsKey = false,
-                    IsNullable = true
-                     });
-                    break;
-                default: 
-                    properties.Add(new Property
-                    {
-                    Id = key.Key,
-                    Name = key.Key,
-                    Description = "",
-                    Type = PropertyType.String,
-                    TypeAtSource = "String",
-                    IsKey = false,
-                    IsNullable = true
-                     });
-                    break;
+                    var error = JsonConvert.DeserializeObject<ApiError>(await response.Content.ReadAsStringAsync());
+                    throw new Exception(error.Message);
                 }
 
-            }
+                var objectPropertiesResponse =
+                    JsonConvert.DeserializeObject<PropertyResponseWrapper>(
+                        await response.Content.ReadAsStringAsync());
 
-            schema.Properties.Clear();
-            schema.Properties.AddRange(properties);
+                var properties = new List<Property>();
+                var row = objectPropertiesResponse.Scripts[0];
 
-            if (schema.Properties.Count == 0)
-            {
-                schema.Description = Constants.EmptySchemaDescription;
-            }
-
-            schema.DataFlowDirection = GetDataFlowDirection();
-
-            return schema;
-            }
-            public override async IAsyncEnumerable<Record> ReadRecordsAsync(IApiClient apiClient, Schema schema, bool isDiscoverRead = false)
-        {
-            var after = "";
-            var hasMore = false;
-            var queryDate = await apiClient.GetQueryDate();
-            var pageNumber = 1;
-
-            while(true)
-            {
-                var response = await apiClient.GetAsync(
-                    $"{AllPath.TrimStart('/')}&StartDate={queryDate}&Page={pageNumber}");
-
-
-                response.EnsureSuccessStatusCode();
-
-                var objectResponseWrapper =
-                    JsonConvert.DeserializeObject<PrescriptionResponseWrapper>(await response.Content.ReadAsStringAsync());
-
-                //after = objectResponseWrapper?.Paging?.Next?.After ?? "";
-                //hasMore = !string.IsNullOrWhiteSpace(after);
-
-                if (objectResponseWrapper?.Scripts.Count == 0)
+                foreach (var key in row)
                 {
-                    yield break;
-                }
-                else
-                {
-
-                    
-                    foreach (var objectResponse in objectResponseWrapper?.Scripts)
+                    switch (key.Key)
                     {
-                        var recordMap = new Dictionary<string, object>();
-
-                        foreach (var objectProperty in objectResponse)
-                        {
-                            switch(objectProperty.Key)
-                            
+                        case ("Patient"):
+                            properties.Add(new Property
                             {
-                            case("Patient"):
-                                try
-                                { 
-                                    var patientJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(objectProperty.Value.ToString());
-                                    recordMap["PatientId"] = patientJson["Id"] ?? "";
-                                }
-                                catch
-                                {
-                                    recordMap[objectProperty.Key] = "";
-                                }            
-                                break;
-
-                            default:
-
-                                try
-                                {
-                                    recordMap[objectProperty.Key] = objectProperty.Value.ToString() ?? "";
-                                }
-                                catch
-                                {
-                                    recordMap[objectProperty.Key] = "";
-                                }
-                                break;
-
-                            }
-                        }  
-
-                        yield return new Record
-                        {
-                            Action = Record.Types.Action.Upsert,
-                            DataJson = JsonConvert.SerializeObject(recordMap)
-                        };
+                                Id = "PatientId",
+                                Name = "PatientId",
+                                Description = "",
+                                Type = PropertyType.String,
+                                TypeAtSource = "String",
+                                IsKey = false,
+                                IsNullable = true
+                            });
+                            break;
+                        case ("ScriptNumber"):
+                            properties.Add(new Property
+                            {
+                                Id = "ScriptNumber",
+                                Name = "ScriptNumber",
+                                Description = "",
+                                Type = PropertyType.String,
+                                TypeAtSource = "String",
+                                IsKey = true,
+                                IsNullable = false
+                            });
+                            break;
+                        default:
+                            properties.Add(new Property
+                            {
+                                Id = key.Key,
+                                Name = key.Key,
+                                Description = "",
+                                Type = PropertyType.String,
+                                TypeAtSource = "String",
+                                IsKey = false,
+                                IsNullable = true
+                            });
+                            break;
                     }
-                    pageNumber=pageNumber+1;
                 }
-            }
-        }
-            public async Task<Schema> GetSchemaForEndpoint(IApiClient apiClient, Schema schema, Endpoint? endpoint)
-        {
-            if (endpoint == null)
-            {
+
+                schema.Properties.Clear();
+                schema.Properties.AddRange(properties);
+
+                if (schema.Properties.Count == 0)
+                {
+                    schema.Description = Constants.EmptySchemaDescription;
+                }
+
+                schema.DataFlowDirection = GetDataFlowDirection();
+
                 return schema;
             }
-
-            if (endpoint.ShouldGetStaticSchema)
+            public override async IAsyncEnumerable<Record> ReadRecordsAsync(IApiClient apiClient, Schema schema, bool isDiscoverRead = false)
             {
-                return await endpoint.GetStaticSchemaAsync(apiClient, schema);
-            }
+                var queryDate = apiClient.GetQueryDate();
+                var pageNumber = 1;
 
-            // invoke properties api
-            var response = await apiClient.GetAsync(endpoint.AllPath);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = JsonConvert.DeserializeObject<ApiError>(await response.Content.ReadAsStringAsync());
-                throw new Exception(error.Message);
-            }
-
-            var objectPropertiesResponse =
-                JsonConvert.DeserializeObject<PropertyResponseWrapper>(
-                    await response.Content.ReadAsStringAsync());
-
-            var properties = new List<Property>();
-            var row = objectPropertiesResponse.Scripts[0];
-
-            foreach (var key in row)
-            {   
-            // var propertyMetaJson = new PropertyMetaJson
-            // Calculated = objectProperty.Calculated,
-            // IsKey = objectProperty.IsKey,
-            // ModificationMetaData = objectProperty.ModificationMetaData
-             //   };
-
-                switch (key.Key)
+                while (true)
                 {
-                case ("Patient"):
-                    properties.Add(new Property
+                    var response = await apiClient.GetAsync(
+                        $"{AllPath.TrimStart('/')}&StartDate={queryDate}&Page={pageNumber}");
+
+
+                    response.EnsureSuccessStatusCode();
+
+                    var objectResponseWrapper =
+                        JsonConvert.DeserializeObject<PrescriptionResponseWrapper>(await response.Content.ReadAsStringAsync());
+
+                    if (objectResponseWrapper?.Scripts.Count == 0)
                     {
-                    Id = "PatientId",
-                    Name = "PatientId",
-                    Description = "",
-                    Type = PropertyType.String,
-                    TypeAtSource = "String",
-                    IsKey = false,
-                    IsNullable = true
-                     });
-                    break;
-                default: 
-                    properties.Add(new Property
+                        yield break;
+                    }
+                    else
                     {
-                    Id = key.Key,
-                    Name = key.Key,
-                    Description = "",
-                    Type = PropertyType.String,
-                    TypeAtSource = "String",
-                    IsKey = false,
-                    IsNullable = true
-                     });
-                    break;
+                        foreach (var objectResponse in objectResponseWrapper?.Scripts)
+                        {
+                            var recordMap = new Dictionary<string, object>();
+
+                            foreach (var objectProperty in objectResponse)
+                            {
+                                switch (objectProperty.Key)
+
+                                {
+                                    case ("Patient"):
+                                        try
+                                        {
+                                            var patientJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(objectProperty.Value.ToString());
+                                            recordMap["PatientId"] = patientJson["Id"] ?? "";
+                                        }
+                                        catch
+                                        {
+                                            recordMap[objectProperty.Key] = "";
+                                        }
+                                        break;
+
+                                    default:
+
+                                        try
+                                        {
+                                            recordMap[objectProperty.Key] = objectProperty.Value.ToString() ?? "";
+                                        }
+                                        catch
+                                        {
+                                            recordMap[objectProperty.Key] = "";
+                                        }
+                                        break;
+                                }
+                            }
+
+                            yield return new Record
+                            {
+                                Action = Record.Types.Action.Upsert,
+                                DataJson = JsonConvert.SerializeObject(recordMap)
+                            };
+                        }
+                        pageNumber = pageNumber + 1;
+                    }
+                }
+            }
+
+            public async Task<Schema> GetSchemaForEndpoint(IApiClient apiClient, Schema schema, Endpoint? endpoint)
+            {
+                if (endpoint == null)
+                {
+                    return schema;
                 }
 
+                if (endpoint.ShouldGetStaticSchema)
+                {
+                    return await endpoint.GetStaticSchemaAsync(apiClient, schema);
+                }
+
+                // invoke properties api
+                var response = await apiClient.GetAsync(endpoint.AllPath);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = JsonConvert.DeserializeObject<ApiError>(await response.Content.ReadAsStringAsync());
+                    throw new Exception(error.Message);
+                }
+
+                var objectPropertiesResponse =
+                    JsonConvert.DeserializeObject<PropertyResponseWrapper>(
+                        await response.Content.ReadAsStringAsync());
+
+                var properties = new List<Property>();
+                var row = objectPropertiesResponse.Scripts[0];
+
+                foreach (var key in row)
+                {
+                    switch (key.Key)
+                    {
+                        case ("Patient"):
+                            properties.Add(new Property
+                            {
+                                Id = "PatientId",
+                                Name = "PatientId",
+                                Description = "",
+                                Type = PropertyType.String,
+                                TypeAtSource = "String",
+                                IsKey = false,
+                                IsNullable = true
+                            });
+                            break;
+                        default:
+                            properties.Add(new Property
+                            {
+                                Id = key.Key,
+                                Name = key.Key,
+                                Description = "",
+                                Type = PropertyType.String,
+                                TypeAtSource = "String",
+                                IsKey = false,
+                                IsNullable = true
+                            });
+                            break;
+                    }
+                }
+
+                schema.Properties.Clear();
+                schema.Properties.AddRange(properties);
+
+                if (schema.Properties.Count == 0)
+                {
+                    schema.Description = Constants.EmptySchemaDescription;
+                }
+
+                schema.DataFlowDirection = endpoint.GetDataFlowDirection();
+
+                return schema;
             }
-
-            schema.Properties.Clear();
-            schema.Properties.AddRange(properties);
-
-            if (schema.Properties.Count == 0)
-            {
-                schema.Description = Constants.EmptySchemaDescription;
-            }
-
-            schema.DataFlowDirection = endpoint.GetDataFlowDirection();
-
-            return schema;
         }
-    }
         public static readonly Dictionary<string, Endpoint> PrescriptionEndpoints = new Dictionary<string, Endpoint>
         {
             {

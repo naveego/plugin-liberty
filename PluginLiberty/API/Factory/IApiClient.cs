@@ -13,6 +13,6 @@ namespace PluginLiberty.API.Factory
         Task<HttpResponseMessage> PutAsync(string path, StringContent json);
         Task<HttpResponseMessage> PatchAsync(string path, StringContent json);
         Task<HttpResponseMessage> DeleteAsync(string path);
-        Task<string>  GetQueryDate();
+        string GetQueryDate();
     }
 }

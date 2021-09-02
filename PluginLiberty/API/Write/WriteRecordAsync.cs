@@ -44,7 +44,7 @@ namespace PluginLiberty.API.Write
                 {
                     Logger.Error(new Exception(errorMessage), errorMessage);
                 }
-                
+
                 timer.Stop();
                 Logger.Debug($"Acknowledged Record {record.RecordId} time: {timer.ElapsedMilliseconds}");
 

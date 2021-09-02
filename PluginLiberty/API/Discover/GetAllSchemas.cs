@@ -82,39 +82,39 @@ namespace PluginLiberty.API.Discover
             var row = objectPropertiesResponse.Scripts[0];
 
             foreach (var key in row)
-            {   
-            // var propertyMetaJson = new PropertyMetaJson
-            // Calculated = objectProperty.Calculated,
-            // IsKey = objectProperty.IsKey,
-            // ModificationMetaData = objectProperty.ModificationMetaData
-             //   };
+            {
+                // var propertyMetaJson = new PropertyMetaJson
+                // Calculated = objectProperty.Calculated,
+                // IsKey = objectProperty.IsKey,
+                // ModificationMetaData = objectProperty.ModificationMetaData
+                //   };
 
                 switch (key.Key)
                 {
-                case ("Patient"):
-                    properties.Add(new Property
-                    {
-                    Id = "PatientId",
-                    Name = "PatientId",
-                    Description = "",
-                    Type = PropertyType.String,
-                    TypeAtSource = "String",
-                    IsKey = false,
-                    IsNullable = true
-                     });
-                    break;
-                default: 
-                    properties.Add(new Property
-                    {
-                    Id = key.Key,
-                    Name = key.Key,
-                    Description = "",
-                    Type = PropertyType.String,
-                    TypeAtSource = "String",
-                    IsKey = false,
-                    IsNullable = true
-                     });
-                    break;
+                    case ("Patient"):
+                        properties.Add(new Property
+                        {
+                            Id = "PatientId",
+                            Name = "PatientId",
+                            Description = "",
+                            Type = PropertyType.String,
+                            TypeAtSource = "String",
+                            IsKey = false,
+                            IsNullable = true
+                        });
+                        break;
+                    default:
+                        properties.Add(new Property
+                        {
+                            Id = key.Key,
+                            Name = key.Key,
+                            Description = "",
+                            Type = PropertyType.String,
+                            TypeAtSource = "String",
+                            IsKey = false,
+                            IsNullable = true
+                        });
+                        break;
                 }
 
             }

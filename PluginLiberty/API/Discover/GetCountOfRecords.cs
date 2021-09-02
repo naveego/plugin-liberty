@@ -11,7 +11,7 @@ namespace PluginLiberty.API.Discover
         {
             return endpoint != null
                 ? endpoint.GetCountOfRecords(apiClient)
-                : Task.FromResult(new Count {Kind = Count.Types.Kind.Unavailable});
+                : Task.FromResult(new Count { Kind = Count.Types.Kind.Unavailable });
         }
     }
 }

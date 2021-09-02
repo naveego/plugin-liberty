@@ -5,11 +5,11 @@ namespace PluginLiberty.DataContracts
 {
     public class PrescriptionResponseWrapper
     {
-        [JsonProperty("Scripts")] 
+        [JsonProperty("Scripts")]
         public List<Dictionary<string, object>> Scripts { get; set; }
         [JsonProperty("results")]
         public List<ObjectResponse> Results { get; set; }
-        
+
         [JsonProperty("paging")]
         public PagingResponse Paging { get; set; }
     }
@@ -73,7 +73,7 @@ namespace PluginLiberty.DataContracts
     {
         [JsonProperty("ScriptNumber")]
         public int ScriptNumber { get; set; }
-        
+
         [JsonProperty("properties")]
         public Dictionary<string, object> Properties { get; set; }
     }
@@ -82,8 +82,8 @@ namespace PluginLiberty.DataContracts
     public class PropertyResponseWrapper
     {
         [JsonProperty("Scripts")]
-        public List<Dictionary<string, object>> Scripts {get; set;}
-        
+        public List<Dictionary<string, object>> Scripts { get; set; }
+
         [JsonProperty("paging")]
         public PagingResponse Paging { get; set; }
     }
@@ -92,22 +92,22 @@ namespace PluginLiberty.DataContracts
     {
         [JsonProperty("name")]
         public string Id { get; set; }
-        
+
         [JsonProperty("label")]
         public string Name { get; set; }
-        
+
         [JsonProperty("description")]
         public string Description { get; set; }
-        
+
         [JsonProperty("hasUniqueValue")]
         public bool IsKey { get; set; }
-        
+
         [JsonProperty("calculated")]
         public bool Calculated { get; set; }
-        
+
         [JsonProperty("type")]
         public string Type { get; set; }
-        
+
         [JsonProperty("modificationMetadata")]
         public ModificationMetaData ModificationMetaData { get; set; }
     }
@@ -122,7 +122,7 @@ namespace PluginLiberty.DataContracts
     {
         [JsonProperty("after")]
         public string After { get; set; }
-        
+
         [JsonProperty("link")]
         public string Link { get; set; }
     }

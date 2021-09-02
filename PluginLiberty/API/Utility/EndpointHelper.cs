@@ -80,7 +80,7 @@ namespace PluginLiberty.API.Utility
             do
             {
                 var response = await apiClient.GetAsync(
-                    $"{BasePath.TrimEnd('/')}/{AllPath.TrimStart('/')}?limit=100&properties={string.Join(",",schema.Properties.Select(p => p.Id))}{(string.IsNullOrWhiteSpace(after) ? "" : $"&after={after}")}");
+                    $"{BasePath.TrimEnd('/')}/{AllPath.TrimStart('/')}?limit=100&properties={string.Join(",", schema.Properties.Select(p => p.Id))}{(string.IsNullOrWhiteSpace(after) ? "" : $"&after={after}")}");
 
                 response.EnsureSuccessStatusCode();
 
@@ -109,7 +109,7 @@ namespace PluginLiberty.API.Utility
                         {
                             recordMap[objectProperty.Key] = "";
                         }
-                        
+
                     }
 
                     yield return new Record
@@ -124,7 +124,7 @@ namespace PluginLiberty.API.Utility
         public virtual async Task<string> WriteRecordAsync(IApiClient apiClient, Schema schema, Record record,
             IServerStreamWriter<RecordAck> responseStream)
         {
-             var recordMap = JsonConvert.DeserializeObject<Dictionary<string, object>>(record.DataJson);
+            var recordMap = JsonConvert.DeserializeObject<Dictionary<string, object>>(record.DataJson);
 
             foreach (var requiredPropertyId in RequiredWritePropertyIds)
             {
@@ -154,7 +154,7 @@ namespace PluginLiberty.API.Utility
                     return errorMessage;
                 }
             }
-            
+
             var postObject = new Dictionary<string, object>();
 
             foreach (var property in schema.Properties)
@@ -168,7 +168,7 @@ namespace PluginLiberty.API.Utility
                 {
                     continue;
                 }
-                
+
                 if (recordMap.ContainsKey(property.Id))
                 {
                     value = recordMap[property.Id];
