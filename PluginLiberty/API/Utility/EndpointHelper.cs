@@ -21,7 +21,7 @@ namespace PluginLiberty.API.Utility
         static EndpointHelper()
         {
             AccountsReceivableEndpointHelper.AccountsReceivableEndpoints.ToList().ForEach(x => Endpoints.TryAdd(x.Key, x.Value));
-            PrescriptionEndpointHelper.PrescriptionEndpoints.ToList().ForEach(x => Endpoints.TryAdd(x.Key, x.Value));
+            Prescription2EndpointHelper.PrescriptionEndpoints.ToList().ForEach(x => Endpoints.TryAdd(x.Key, x.Value));
         }
 
         public static Dictionary<string, Endpoint> GetAllEndpoints()

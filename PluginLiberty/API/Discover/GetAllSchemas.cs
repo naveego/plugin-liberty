@@ -103,6 +103,126 @@ namespace PluginLiberty.API.Discover
                             IsNullable = true
                         });
                         break;
+                        case ("DrugPrescribed"):
+                        var drugprescribedcolumns = JsonConvert.DeserializeObject<Dictionary<string, object>>(key.Value.ToString() ?? "{}");
+                        foreach (var col in drugprescribedcolumns)
+                        {
+                             properties.Add(new Property
+                            {
+                                Id = $"DrugPrescribed.{col.Key}" ,
+                                Name = $"DrugPrescribed.{col.Key}",
+                                Description = "",
+                                Type = PropertyType.String,
+                                TypeAtSource = "String",
+                                IsKey = false,
+                                IsNullable = true
+                            });
+                        }
+                        break;
+                        case ("Prescriber"):
+                        var prescribercolumns = JsonConvert.DeserializeObject<Dictionary<string, object>>(key.Value.ToString() ?? "{}");
+                        foreach (var col in prescribercolumns)
+                        {
+                            switch(col.ToString())
+                            {
+                            case ("Name"):
+                                var prescribernamecolumns = JsonConvert.DeserializeObject<Dictionary<string, object>>(key.Value.ToString() ?? "{}");
+                                foreach (var prescribernamecol in prescribernamecolumns)
+                                {
+                                    properties.Add(new Property
+                                    {
+                                        Id = $"PrescriberName.{prescribernamecol.Key}" ,
+                                        Name = $"PrescriberName.{prescribernamecol.Key}",
+                                        Description = "",
+                                        Type = PropertyType.String,
+                                        TypeAtSource = "String",
+                                        IsKey = false,
+                                        IsNullable = true
+                                    });
+                                }
+                                break;
+                            case ("Address"):
+                                var prescriberaddresscolumns = JsonConvert.DeserializeObject<Dictionary<string, object>>(key.Value.ToString() ?? "{}");
+                                foreach (var prescriberaddresscol in prescriberaddresscolumns)
+                                {
+                                    properties.Add(new Property
+                                    {
+                                        Id = $"PrescriberAddress.{prescriberaddresscol.Key}" ,
+                                        Name = $"PrescriberAddress.{col.Key}",
+                                        Description = "",
+                                        Type = PropertyType.String,
+                                        TypeAtSource = "String",
+                                        IsKey = false,
+                                        IsNullable = true
+                                    });
+                                }
+                                break;
+                            default:
+                                properties.Add(new Property
+                                {
+                                    Id = $"Prescriber.{col.Key}" ,
+                                    Name = $"Prescriber.{col.Key}",
+                                    Description = "",
+                                    Type = PropertyType.String,
+                                    TypeAtSource = "String",
+                                    IsKey = false,
+                                    IsNullable = true
+                                });
+                                break;
+                            }
+                             
+                        }
+                        break;
+                        case ("Fill"):
+                        var fillcolumns = JsonConvert.DeserializeObject<Dictionary<string, object>>(key.Value.ToString() ?? "{}");
+                        foreach (var col in fillcolumns)
+                        {
+                             properties.Add(new Property
+                            {
+                                Id = $"Fill.{col.Key}" ,
+                                Name = $"Fill.{col.Key}",
+                                Description = "",
+                                Type = PropertyType.String,
+                                TypeAtSource = "String",
+                                IsKey = false,
+                                IsNullable = true
+                            });
+                        }
+                        break;
+                            case ("Primary"):
+                            var fillprimarycolumns = JsonConvert.DeserializeObject<Dictionary<string, object>>(key.Value.ToString() ?? "{}");
+                            foreach (var col in fillprimarycolumns)
+                            {
+                                properties.Add(new Property
+                                {
+                                    Id = $"FillPrimary.{col.Key}" ,
+                                    Name = $"FillPrimary.{col.Key}",
+                                    Description = "",
+                                    Type = PropertyType.String,
+                                    TypeAtSource = "String",
+                                    IsKey = false,
+                                    IsNullable = true
+                                });
+                            }
+                            break;
+                            case ("Secondary"):
+                            var fillsecondarycolumns = JsonConvert.DeserializeObject<Dictionary<string, object>>(key.Value.ToString() ?? "{}");
+                            foreach (var col in fillsecondarycolumns)
+                            {
+                                properties.Add(new Property
+                                {
+                                    Id = $"FillSecondary.{col.Key}" ,
+                                    Name = $"FillSecondary.{col.Key}",
+                                    Description = "",
+                                    Type = PropertyType.String,
+                                    TypeAtSource = "String",
+                                    IsKey = false,
+                                    IsNullable = true
+                                });
+                            }
+                            break;
+
+
                     default:
                         properties.Add(new Property
                         {

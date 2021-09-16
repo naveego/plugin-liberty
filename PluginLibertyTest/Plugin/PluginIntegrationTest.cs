@@ -19,7 +19,7 @@ namespace PluginLibertyTest.Plugin
     {
         private Settings GetSettings()
         {
-            return 
+            return
                 new Settings
                 {
                     ApiKey = "", // add to test
@@ -42,10 +42,10 @@ namespace PluginLibertyTest.Plugin
             };
         }
 
-        private Schema GetTestSchema(string endpointId = null, string id = "AllAccountsReceivable", string name = "AllAccountsReceivable")
+        private Schema GetTestSchema(string endpointId = null, string id = "AllPrescriptions", string name = "AllPrescriptions")
         {
             Endpoint endpoint = endpointId == null
-                ? EndpointHelper.GetEndpointForId("AllAccountsReceivable")
+                ? EndpointHelper.GetEndpointForId("AllPrescriptions")
                 : EndpointHelper.GetEndpointForId(endpointId);
 
 
@@ -63,8 +63,8 @@ namespace PluginLibertyTest.Plugin
             // setup
             Server server = new Server
             {
-                Services = {Publisher.BindService(new PluginLiberty.Plugin.Plugin())},
-                Ports = {new ServerPort("localhost", 0, ServerCredentials.Insecure)}
+                Services = { Publisher.BindService(new PluginLiberty.Plugin.Plugin()) },
+                Ports = { new ServerPort("localhost", 0, ServerCredentials.Insecure) }
             };
             server.Start();
 
@@ -101,8 +101,8 @@ namespace PluginLibertyTest.Plugin
             // setup
             Server server = new Server
             {
-                Services = {Publisher.BindService(new PluginLiberty.Plugin.Plugin())},
-                Ports = {new ServerPort("localhost", 0, ServerCredentials.Insecure)}
+                Services = { Publisher.BindService(new PluginLiberty.Plugin.Plugin()) },
+                Ports = { new ServerPort("localhost", 0, ServerCredentials.Insecure) }
             };
             server.Start();
 
@@ -133,8 +133,8 @@ namespace PluginLibertyTest.Plugin
             // setup
             Server server = new Server
             {
-                Services = {Publisher.BindService(new PluginLiberty.Plugin.Plugin())},
-                Ports = {new ServerPort("localhost", 0, ServerCredentials.Insecure)}
+                Services = { Publisher.BindService(new PluginLiberty.Plugin.Plugin()) },
+                Ports = { new ServerPort("localhost", 0, ServerCredentials.Insecure) }
             };
             server.Start();
 
@@ -158,14 +158,14 @@ namespace PluginLibertyTest.Plugin
             // assert
             Assert.IsType<DiscoverSchemasResponse>(response);
             Assert.Equal(2, response.Schemas.Count);
-            
+
             var schema = response.Schemas[0];
             Assert.Equal($"AllAccountsReceivable", schema.Id);
             Assert.Equal("AllAccountsReceivable", schema.Name);
             Assert.Equal($"", schema.Query);
-            Assert.Equal(1, schema.Sample.Count);
+            Assert.Equal(5, schema.Sample.Count);
             Assert.Equal(15, schema.Properties.Count);
-            
+
             var property = schema.Properties[0];
             Assert.Equal("OwnerPatientId", property.Id);
             Assert.Equal("OwnerPatientId", property.Name);
@@ -173,14 +173,14 @@ namespace PluginLibertyTest.Plugin
             Assert.Equal(PropertyType.String, property.Type);
             Assert.True(property.IsKey);
             Assert.False(property.IsNullable);
-            
+
             var schema2 = response.Schemas[1];
             Assert.Equal($"AllPrescriptions", schema2.Id);
             Assert.Equal("AllPrescriptions", schema2.Name);
             Assert.Equal($"", schema2.Query);
             Assert.Equal(10, schema2.Sample.Count);
             Assert.Equal(18, schema2.Properties.Count);
-            
+
             var property2 = schema2.Properties[0];
             Assert.Equal("ScriptNumber", property2.Id);
             Assert.Equal("ScriptNumber", property2.Name);
@@ -200,8 +200,8 @@ namespace PluginLibertyTest.Plugin
             // setup
             Server server = new Server
             {
-                Services = {Publisher.BindService(new PluginLiberty.Plugin.Plugin())},
-                Ports = {new ServerPort("localhost", 0, ServerCredentials.Insecure)}
+                Services = { Publisher.BindService(new PluginLiberty.Plugin.Plugin()) },
+                Ports = { new ServerPort("localhost", 0, ServerCredentials.Insecure) }
             };
             server.Start();
 
@@ -236,7 +236,7 @@ namespace PluginLibertyTest.Plugin
             Assert.Equal($"", schema.Query);
             Assert.Equal(1, schema.Sample.Count);
             Assert.Equal(15, schema.Properties.Count);
-            
+
             var property = schema.Properties[0];
             Assert.Equal("OwnerPatientId", property.Id);
             Assert.Equal("OwnerPatientId", property.Name);
@@ -256,8 +256,8 @@ namespace PluginLibertyTest.Plugin
             // setup
             Server server = new Server
             {
-                Services = {Publisher.BindService(new PluginLiberty.Plugin.Plugin())},
-                Ports = {new ServerPort("localhost", 0, ServerCredentials.Insecure)}
+                Services = { Publisher.BindService(new PluginLiberty.Plugin.Plugin()) },
+                Ports = { new ServerPort("localhost", 0, ServerCredentials.Insecure) }
             };
             server.Start();
 
@@ -273,7 +273,7 @@ namespace PluginLibertyTest.Plugin
             var schemaRequest = new DiscoverSchemasRequest
             {
                 Mode = DiscoverSchemasRequest.Types.Mode.Refresh,
-                ToRefresh = {schema}
+                ToRefresh = { schema }
             };
 
             var request = new ReadRequest()
@@ -319,8 +319,8 @@ namespace PluginLibertyTest.Plugin
             // setup
             Server server = new Server
             {
-                Services = {Publisher.BindService(new PluginLiberty.Plugin.Plugin())},
-                Ports = {new ServerPort("localhost", 0, ServerCredentials.Insecure)}
+                Services = { Publisher.BindService(new PluginLiberty.Plugin.Plugin()) },
+                Ports = { new ServerPort("localhost", 0, ServerCredentials.Insecure) }
             };
             server.Start();
 
@@ -336,7 +336,7 @@ namespace PluginLibertyTest.Plugin
             var schemaRequest = new DiscoverSchemasRequest
             {
                 Mode = DiscoverSchemasRequest.Types.Mode.Refresh,
-                ToRefresh = {schema}
+                ToRefresh = { schema }
             };
 
             var request = new ReadRequest()
