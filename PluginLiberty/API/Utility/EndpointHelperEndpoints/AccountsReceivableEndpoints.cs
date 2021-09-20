@@ -21,6 +21,7 @@ namespace PluginLiberty.API.Utility.EndpointHelperEndpoints
         private class AccountsReceivableEndpoint : Endpoint
         {
             public string PatientPath { get; set; } = "";
+
             public override async Task<Schema> GetStaticSchemaAsync(IApiClient apiClient, Schema schema)
             {
                 List<string> staticSchemaProperties = new List<string>()
@@ -50,7 +51,6 @@ namespace PluginLiberty.API.Utility.EndpointHelperEndpoints
 
                     switch (staticProperty)
                     {
-
                         case ("AccountNumber"):
                             property.Type = PropertyType.Integer;
                             property.IsKey = false;
@@ -87,72 +87,94 @@ namespace PluginLiberty.API.Utility.EndpointHelperEndpoints
                             property.TypeAtSource = "string";
                             break;
                     }
+
                     properties.Add(property);
                 }
+
                 schema.Properties.Clear();
                 schema.Properties.AddRange(properties);
                 schema.DataFlowDirection = GetDataFlowDirection();
                 return schema;
             }
 
-            public override async IAsyncEnumerable<Record> ReadRecordsAsync(IApiClient apiClient, Schema schema, bool isDiscoverRead = false)
+            public override async IAsyncEnumerable<Record> ReadRecordsAsync(IApiClient apiClient, Schema schema,
+                bool isDiscoverRead = false)
             {
                 var queryDate = DateTime.Parse(apiClient.GetQueryDate());
+                bool hasMore;
+                DateTime mostRecentDate;
 
+                do
                 {
+                    // get all patients modified since query date (up to 1001 patients per API documentation)
                     var patientRetryCounter = 1;
-                    var response = await apiClient.GetAsync($"{PatientPath}&modifiedStart={queryDate}");
+                    bool retryPatient;
+                    HttpResponseMessage patientResponse;
 
-                    if (!response.IsSuccessStatusCode)
+                    do
                     {
-                        var error = JsonConvert.DeserializeObject<ApiError>(await response.Content.ReadAsStringAsync());
-                        while (patientRetryCounter < 6)
+                        retryPatient = false;
+                        patientResponse = await apiClient.GetAsync($"{PatientPath}?modifiedStart={queryDate}&arOnly=1");
+
+                        if (!patientResponse.IsSuccessStatusCode)
                         {
-                            response = await apiClient.GetAsync($"{PatientPath}&modifiedStart={queryDate}");
+                            var error = JsonConvert.DeserializeObject<ApiError>(await patientResponse.Content
+                                .ReadAsStringAsync());
+                            var ex = new Exception(error.Message);
+                            Logger.Error(ex, "Patient Retry Failed");
                             Thread.Sleep(patientRetryCounter * patientRetryCounter * 1000);
                             patientRetryCounter++;
-                            Logger.Error(new Exception(error.Message), "Patient Retry Failed");
-                            if (response.IsSuccessStatusCode)
+                            retryPatient = patientRetryCounter < 6;
+
+                            if (!retryPatient)
                             {
-                                break;
+                                throw ex;
                             }
                         }
-                        throw new Exception(error.Message);
-                    }
+                    } while (retryPatient);
 
                     var objectPropertiesResponse =
                         JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(
-                            await response.Content.ReadAsStringAsync());
+                            await patientResponse.Content.ReadAsStringAsync());
 
+                    // find all patients that have AR data
                     foreach (var patient in objectPropertiesResponse)
                     {
+                        // check if patient has AR data
                         if (Int32.Parse(patient["AccountNumber"].ToString()) != 0)
                         {
-                            var ARresponse = await apiClient.GetAsync($"/ar/{patient["Id"].ToString()}");
+                            // get AR data for patient
+                            var arRetryCounter = 1;
+                            bool retryAR;
+                            HttpResponseMessage arResponse;
 
-                            if (!ARresponse.IsSuccessStatusCode)
+                            do
                             {
-                                var error = JsonConvert.DeserializeObject<ApiError>(await ARresponse.Content.ReadAsStringAsync());
-                                var arRetryCounter = 1;
+                                retryAR = false;
+                                arResponse = await apiClient.GetAsync($"/ar/{patient["Id"].ToString()}");
 
-                                while (arRetryCounter < 6)
+                                if (!arResponse.IsSuccessStatusCode)
                                 {
-                                    ARresponse = await apiClient.GetAsync($"/ar/{patient["Id"].ToString()}");
+                                    var error = JsonConvert.DeserializeObject<ApiError>(
+                                        await arResponse.Content.ReadAsStringAsync());
+                                    var ex = new Exception(error.Message);
+                                    Logger.Error(ex, "AR Retry Failed");
                                     Thread.Sleep(arRetryCounter * arRetryCounter * 1000);
                                     arRetryCounter++;
-                                    Logger.Error(new Exception(error.Message), "AR Retry Failed");
-                                    if (ARresponse.IsSuccessStatusCode)
+                                    retryAR = arRetryCounter < 6;
+
+                                    if (!retryAR)
                                     {
-                                        break;
+                                        throw ex;
                                     }
                                 }
-                                throw new Exception(error.Message);
-                            }
+                            } while (retryAR);
 
                             var arPropertiesResponse =
                                 JsonConvert.DeserializeObject<AccountsReceivableWrapper>(
-                                    await ARresponse.Content.ReadAsStringAsync());
+                                    await arResponse.Content.ReadAsStringAsync());
 
+                            // build patient AR data record
                             var recordMap = new Dictionary<string, object>();
 
                             recordMap["OwnerPatientId"] = arPropertiesResponse.OwnerPatientId ?? "";
@@ -171,6 +193,7 @@ namespace PluginLiberty.API.Utility.EndpointHelperEndpoints
                             recordMap["CurrentCredits"] = arPropertiesResponse.CurrentCredits;
                             recordMap["TotalBalance"] = arPropertiesResponse.TotalBalance;
 
+                            // return patient AR data record
                             yield return new Record
                             {
                                 Action = Record.Types.Action.Upsert,
@@ -178,31 +201,36 @@ namespace PluginLiberty.API.Utility.EndpointHelperEndpoints
                             };
                         }
                     }
-                }
+
+                    // TODO: Handle when there are 1001 records as that is the api limit
+                    // hasMore = objectPropertiesResponse.Count == 1001;
+                    hasMore = false;
+                } while (hasMore);
             }
         }
 
-        public static readonly Dictionary<string, Endpoint> AccountsReceivableEndpoints = new Dictionary<string, Endpoint>
-        {
+        public static readonly Dictionary<string, Endpoint> AccountsReceivableEndpoints =
+            new Dictionary<string, Endpoint>
             {
-                "AllAccountsReceivable", new AccountsReceivableEndpoint
                 {
-                    Id = "AllAccountsReceivable",
-                    ShouldGetStaticSchema = true,
-                    Name = "AllAccountsReceivable",
-                    BasePath = "https://api.libertysoftware.com",
-                    PatientPath = $"/patient?PageSize=100",
-                    PropertiesPath = "/crm/v3/properties/prescriptions",
-                    SupportedActions = new List<EndpointActions>
+                    "AllAccountsReceivable", new AccountsReceivableEndpoint
                     {
-                        EndpointActions.Get
-                    },
-                    PropertyKeys = new List<string>
-                    {
-                        "hs_unique_creation_key"
+                        Id = "AllAccountsReceivable",
+                        ShouldGetStaticSchema = true,
+                        Name = "AllAccountsReceivable",
+                        BasePath = "https://api.libertysoftware.com",
+                        PatientPath = $"/patient",
+                        PropertiesPath = "/crm/v3/properties/prescriptions",
+                        SupportedActions = new List<EndpointActions>
+                        {
+                            EndpointActions.Get
+                        },
+                        PropertyKeys = new List<string>
+                        {
+                            "hs_unique_creation_key"
+                        }
                     }
-                }
-            },
-        };
+                },
+            };
     }
 }

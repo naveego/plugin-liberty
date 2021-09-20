@@ -13,7 +13,6 @@ using Newtonsoft.Json;
 using PluginLiberty.API.Discover;
 using PluginLiberty.API.Factory;
 using PluginLiberty.API.Read;
-using PluginLiberty.API.Write;
 using PluginLiberty.DataContracts;
 using PluginLiberty.Helper;
 
@@ -62,7 +61,7 @@ namespace PluginLiberty.Plugin
         }
         
         /// <summary>
-        /// Establishes a connection with Campaigner.
+        /// Establishes a connection with Liberty.
         /// </summary>
         /// <param name="request"></param>
         /// <param name="context"></param>
@@ -161,7 +160,7 @@ namespace PluginLiberty.Plugin
 
 
         /// <summary>
-        /// Discovers schemas located in the users Campaigner instance
+        /// Discovers schemas located in the users Liberty instance
         /// </summary>
         /// <param name="request"></param>
         /// <param name="context"></param>
@@ -315,7 +314,7 @@ namespace PluginLiberty.Plugin
         }
         
         /// <summary>
-        /// Prepares writeback settings to write to Campaigner
+        /// Prepares writeback settings to write to Liberty
         /// </summary>
         /// <param name="request"></param>
         /// <param name="context"></param>
@@ -343,7 +342,7 @@ namespace PluginLiberty.Plugin
         }
 
         /// <summary>
-        /// Writes records to Campaigner
+        /// Writes records to Liberty
         /// </summary>
         /// <param name="requestStream"></param>
         /// <param name="responseStream"></param>
@@ -354,7 +353,7 @@ namespace PluginLiberty.Plugin
         {
             try
             {
-                Logger.Info("Writing records to Campaigner...");
+                Logger.Info("Writing records to Liberty...");
 
                 var schema = _server.WriteSettings.Schema;
                 var inCount = 0;
@@ -374,16 +373,11 @@ namespace PluginLiberty.Plugin
                     }
                     else
                     {
-                        // send record to source system
-                        // add await for unit testing 
-                        // removed to allow multiple to run at the same time
-                        Task.Run(async () =>
-                                await Write.WriteRecordAsync(_apiClient, schema, record, responseStream),
-                            context.CancellationToken);
+                        throw new System.NotSupportedException();
                     }
                 }
 
-                Logger.Info($"Wrote {inCount} records to Campaigner.");
+                Logger.Info($"Wrote {inCount} records to Liberty.");
             }
             catch (Exception e)
             {

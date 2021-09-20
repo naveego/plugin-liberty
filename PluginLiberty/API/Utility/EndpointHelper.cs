@@ -21,7 +21,7 @@ namespace PluginLiberty.API.Utility
         static EndpointHelper()
         {
             AccountsReceivableEndpointHelper.AccountsReceivableEndpoints.ToList().ForEach(x => Endpoints.TryAdd(x.Key, x.Value));
-            Prescription2EndpointHelper.PrescriptionEndpoints.ToList().ForEach(x => Endpoints.TryAdd(x.Key, x.Value));
+            PrescriptionsEndpointHelper.PrescriptionEndpoints.ToList().ForEach(x => Endpoints.TryAdd(x.Key, x.Value));
         }
 
         public static Dictionary<string, Endpoint> GetAllEndpoints()
@@ -59,7 +59,6 @@ namespace PluginLiberty.API.Utility
 
         protected virtual List<string> RequiredWritePropertyIds { get; set; } = new List<string>
         {
-            // "hs_unique_creation_key"
         };
 
         public List<EndpointActions> SupportedActions { get; set; } = new List<EndpointActions>();
@@ -72,159 +71,15 @@ namespace PluginLiberty.API.Utility
             });
         }
 
-        public virtual async IAsyncEnumerable<Record> ReadRecordsAsync(IApiClient apiClient, Schema schema, bool isDiscoverRead = false)
+        public virtual IAsyncEnumerable<Record> ReadRecordsAsync(IApiClient apiClient, Schema schema, bool isDiscoverRead = false)
         {
-            var after = "";
-            var hasMore = false;
-
-            do
-            {
-                var response = await apiClient.GetAsync(
-                    $"{BasePath.TrimEnd('/')}/{AllPath.TrimStart('/')}?limit=100&properties={string.Join(",", schema.Properties.Select(p => p.Id))}{(string.IsNullOrWhiteSpace(after) ? "" : $"&after={after}")}");
-
-                response.EnsureSuccessStatusCode();
-
-                var objectResponseWrapper =
-                    JsonConvert.DeserializeObject<PrescriptionResponseWrapper>(await response.Content.ReadAsStringAsync());
-
-                after = objectResponseWrapper?.Paging?.Next?.After ?? "";
-                hasMore = !string.IsNullOrWhiteSpace(after);
-
-                if (objectResponseWrapper?.Results.Count == 0)
-                {
-                    yield break;
-                }
-
-                foreach (var objectResponse in objectResponseWrapper?.Results)
-                {
-                    var recordMap = new Dictionary<string, object>();
-
-                    foreach (var objectProperty in objectResponse.Properties)
-                    {
-                        try
-                        {
-                            recordMap[objectProperty.Key] = objectProperty.Value.ToString() ?? "";
-                        }
-                        catch
-                        {
-                            recordMap[objectProperty.Key] = "";
-                        }
-
-                    }
-
-                    yield return new Record
-                    {
-                        Action = Record.Types.Action.Upsert,
-                        DataJson = JsonConvert.SerializeObject(recordMap)
-                    };
-                }
-            } while (hasMore);
+            throw new NotImplementedException();
         }
 
-        public virtual async Task<string> WriteRecordAsync(IApiClient apiClient, Schema schema, Record record,
+        public virtual Task<string> WriteRecordAsync(IApiClient apiClient, Schema schema, Record record,
             IServerStreamWriter<RecordAck> responseStream)
         {
-            var recordMap = JsonConvert.DeserializeObject<Dictionary<string, object>>(record.DataJson);
-
-            foreach (var requiredPropertyId in RequiredWritePropertyIds)
-            {
-                if (!recordMap.ContainsKey(requiredPropertyId))
-                {
-                    var errorMessage = $"Record did not contain required property {requiredPropertyId}";
-                    var errorAck = new RecordAck
-                    {
-                        CorrelationId = record.CorrelationId,
-                        Error = errorMessage
-                    };
-                    await responseStream.WriteAsync(errorAck);
-
-                    return errorMessage;
-                }
-
-                if (recordMap.ContainsKey(requiredPropertyId) && recordMap[requiredPropertyId] == null)
-                {
-                    var errorMessage = $"Required property {requiredPropertyId} was NULL";
-                    var errorAck = new RecordAck
-                    {
-                        CorrelationId = record.CorrelationId,
-                        Error = errorMessage
-                    };
-                    await responseStream.WriteAsync(errorAck);
-
-                    return errorMessage;
-                }
-            }
-
-            var postObject = new Dictionary<string, object>();
-
-            foreach (var property in schema.Properties)
-            {
-                object value = "";
-
-                var propertyMetaJson = JsonConvert.DeserializeObject<PropertyMetaJson>(property.PublisherMetaJson);
-                var readOnlyProperty = propertyMetaJson?.ModificationMetaData?.ReadOnlyValue ?? false;
-
-                if (propertyMetaJson.Calculated || propertyMetaJson.IsKey || readOnlyProperty || !recordMap.ContainsKey(property.Id))
-                {
-                    continue;
-                }
-
-                if (recordMap.ContainsKey(property.Id))
-                {
-                    value = recordMap[property.Id];
-                }
-
-                postObject.TryAdd(property.Id, value);
-            }
-
-            var postObjectWrapper = new UpsertObjectWrapper
-            {
-                Properties = postObject
-            };
-
-            var objstr = JsonConvert.SerializeObject(postObjectWrapper);
-
-            var json = new StringContent(
-                JsonConvert.SerializeObject(postObjectWrapper),
-                Encoding.UTF8,
-                "application/json"
-            );
-
-            HttpResponseMessage response;
-
-            if (!recordMap.ContainsKey(WritePathPropertyId) || recordMap.ContainsKey(WritePathPropertyId) &&
-                recordMap[WritePathPropertyId] == null)
-            {
-                response =
-                    await apiClient.PostAsync($"{BasePath.TrimEnd('/')}", json);
-            }
-            else
-            {
-                response =
-                    await apiClient.PatchAsync($"{BasePath.TrimEnd('/')}/{recordMap[WritePathPropertyId]}", json);
-            }
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorMessage = await response.Content.ReadAsStringAsync();
-                var errorAck = new RecordAck
-                {
-                    CorrelationId = record.CorrelationId,
-                    Error = errorMessage
-                };
-                await responseStream.WriteAsync(errorAck);
-
-                return errorMessage;
-            }
-
-            var ack = new RecordAck
-            {
-                CorrelationId = record.CorrelationId,
-                Error = ""
-            };
-            await responseStream.WriteAsync(ack);
-
-            return "";
+            throw new NotImplementedException();
         }
 
         public virtual Task<Schema> GetStaticSchemaAsync(IApiClient apiClient, Schema schema)

@@ -26,7 +26,7 @@ namespace PluginLibertyTest.Plugin
                     Username = "",
                     NPI = "",
                     Password = "",
-                    QueryStartDate = ""
+                    QueryStartDate = "2019-01-01"
                 };
         }
 
@@ -179,7 +179,7 @@ namespace PluginLibertyTest.Plugin
             Assert.Equal("AllPrescriptions", schema2.Name);
             Assert.Equal($"", schema2.Query);
             Assert.Equal(10, schema2.Sample.Count);
-            Assert.Equal(18, schema2.Properties.Count);
+            Assert.Equal(104, schema2.Properties.Count);
 
             var property2 = schema2.Properties[0];
             Assert.Equal("ScriptNumber", property2.Id);
@@ -231,15 +231,15 @@ namespace PluginLibertyTest.Plugin
             Assert.Equal(1, response.Schemas.Count);
 
             var schema = response.Schemas[0];
-            Assert.Equal($"AllAccountsReceivable", schema.Id);
-            Assert.Equal("AllAccountsReceivable", schema.Name);
+            Assert.Equal($"AllPrescriptions", schema.Id);
+            Assert.Equal("AllPrescriptions", schema.Name);
             Assert.Equal($"", schema.Query);
-            Assert.Equal(1, schema.Sample.Count);
-            Assert.Equal(15, schema.Properties.Count);
+            Assert.Equal(10, schema.Sample.Count);
+            Assert.Equal(104, schema.Properties.Count);
 
             var property = schema.Properties[0];
-            Assert.Equal("OwnerPatientId", property.Id);
-            Assert.Equal("OwnerPatientId", property.Name);
+            Assert.Equal("ScriptNumber", property.Id);
+            Assert.Equal("ScriptNumber", property.Name);
             Assert.Equal("", property.Description);
             Assert.Equal(PropertyType.String, property.Type);
             Assert.True(property.IsKey);
@@ -300,13 +300,13 @@ namespace PluginLibertyTest.Plugin
             }
 
             // assert
-            Assert.Equal(1, records.Count);
+            Assert.Equal(12765, records.Count);
 
             var record = JsonConvert.DeserializeObject<Dictionary<string, object>>(records[0].DataJson);
-            Assert.Equal("100497", record["OwnerPatientId"]);
-            Assert.Equal(2.09, record["AmountDue"]);
-            Assert.Equal("Y", record["ChargeCode"]);
-            Assert.Equal(null, record["LastPaymentDate"]);
+            Assert.Equal("6001776", record["ScriptNumber"]);
+            Assert.Equal("2018-05-04", record["WrittenDate"]);
+            Assert.Equal("3", record["RefillsAuthorized"]);
+            Assert.Equal("null", record["StatusCode"]);
 
             // cleanup
             await channel.ShutdownAsync();
@@ -329,7 +329,7 @@ namespace PluginLibertyTest.Plugin
             var channel = new Channel($"localhost:{port}", ChannelCredentials.Insecure);
             var client = new Publisher.PublisherClient(channel);
 
-            var schema = GetTestSchema("AllPrescriptions", "AllPrescriptions", "AllPrescriptions");
+            var schema = GetTestSchema("AllAccountsReceivable", "AllAccountsReceivable", "AllAccountsReceivable");
 
             var connectRequest = GetConnectSettings();
 

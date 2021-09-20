@@ -7,11 +7,15 @@ namespace PluginLiberty.DataContracts
     {
         [JsonProperty("Scripts")]
         public List<Dictionary<string, object>> Scripts { get; set; }
-        [JsonProperty("results")]
-        public List<ObjectResponse> Results { get; set; }
+        
+        [JsonProperty("RecordCount")]
+        public long RecordCount { get; set; }
 
-        [JsonProperty("paging")]
-        public PagingResponse Paging { get; set; }
+        [JsonProperty("Page")]
+        public long Page { get; set; }
+        
+        [JsonProperty("PageSize")]
+        public long PageSize { get; set; }
     }
 
     public class PatientResponseWrapper
