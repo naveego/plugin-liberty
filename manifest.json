@@ -54,7 +54,7 @@
         "QueryStartDate": {
           "type": "string",
           "title": "Query Start Date",
-          "description": "Query Start Date to use for authentication."
+          "description": "Query Start Date for data."
         }
       },
       "required": [
