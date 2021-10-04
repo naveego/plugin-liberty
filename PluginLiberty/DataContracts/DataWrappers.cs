@@ -73,6 +73,103 @@ namespace PluginLiberty.DataContracts
         public float TotalBalance { get; set; }
     }
 
+    public class ClaimsWrapper
+    {
+        [JsonProperty("ScriptNumber")]
+        public string? ScriptNumber { get; set; }
+
+        [JsonProperty("RefillNumber")]
+        public string? RefillNumber { get; set; }
+
+        [JsonProperty("DateSubmitted")]
+        public string? DateSubmitted { get; set; }
+
+        [JsonProperty("Coverage")]
+        public string? Coverage { get; set; }
+
+        [JsonProperty("Type")]
+        public string? Type { get; set; }
+
+        [JsonProperty("Status")]
+        public string? Status { get; set; }
+
+        [JsonProperty("Message")]
+        public string? Message { get; set; }
+
+        [JsonProperty("AuthNumber")]
+        public string? AuthNumber { get; set; }
+
+        [JsonProperty("PayorId")]
+        public string? PayorId { get; set; }
+
+        [JsonProperty("BIN")]
+        public string? BIN { get; set; }
+
+        [JsonProperty("PCN")]
+        public string? PCN { get; set; }
+
+        [JsonProperty("DrugId")]
+        public string? DrugId { get; set; }
+
+        [JsonProperty("BasisOfCost")]
+        public string? BasisOfCost { get; set; }
+
+        [JsonProperty("BasisOfReimbursement")]
+        public string? BasisOfReimbursement { get; set; }
+
+        [JsonProperty("RequestedACQ")]
+        public float RequestedACQ { get; set; }
+
+        [JsonProperty("RequestedCost")]
+        public float RequestedCost { get; set; }
+
+        [JsonProperty("RequestedServiceFee")]
+        public float RequestedServiceFee { get; set; }
+
+        [JsonProperty("RequestedDispensingFee")]
+        public float RequestedDispensingFee { get; set; }
+
+        [JsonProperty("RequestedCopay")]
+        public float RequestedCopay { get; set; }
+
+        [JsonProperty("RequestedTax")]
+        public float RequestedTax { get; set; }
+
+        [JsonProperty("RequestedIncentive")]
+        public float RequestedIncentive { get; set; }
+
+        [JsonProperty("RequestedUC")]
+        public float RequestedUC { get; set; }
+
+        [JsonProperty("RequestedTotal")]
+        public float RequestedTotal { get; set; }
+
+        [JsonProperty("RepliedCost")]
+        public float RepliedCost { get; set; }
+
+        [JsonProperty("RepliedServiceFee")]
+        public float RepliedServiceFee { get; set; }
+
+        [JsonProperty("RepliedDispensingFee")]
+        public float RepliedDispensingFee { get; set; }
+
+        [JsonProperty("RepliedCopay")]
+        public float RepliedCopay { get; set; }
+
+        [JsonProperty("RepliedTax")]
+        public float RepliedTax { get; set; }
+
+        [JsonProperty("RepliedIncentive")]
+        public float RepliedIncentive { get; set; }
+
+        [JsonProperty("RepliedTotal")]
+        public float RepliedTotal { get; set; }
+
+        [JsonProperty("OtherPayorAmt")]
+        public float OtherPayorAmt { get; set; }
+    
+    }
+    
     public class ObjectResponse
     {
         [JsonProperty("ScriptNumber")]
