@@ -22,10 +22,10 @@ namespace PluginLibertyTest.Plugin
             return
                 new Settings
                 {
-                    ApiKey = "3529094", // add to test
-                    Username = "aunalytics",
-                    NPI = "1902346372",
-                    Password = "Mh-4Ae5-Nk(J",
+                    ApiKey = "", // add to test
+                    Username = "",
+                    NPI = "",
+                    Password = "",
                     QueryStartDate = "2019-01-01"
                 };
         }
