@@ -250,7 +250,7 @@ namespace PluginLiberty.API.Utility.EndpointHelperEndpoints
                         case ("Fill.SecondaryPatientPay"):
                         case ("Fill.PrimaryInsurancePay"):
                         case ("Fill.PrimaryPatientPay"):
-                            property.Type = PropertyType.Float;
+                            property.Type = PropertyType.String;
                             property.IsKey = false;
                             property.TypeAtSource = "float";
                             break;
