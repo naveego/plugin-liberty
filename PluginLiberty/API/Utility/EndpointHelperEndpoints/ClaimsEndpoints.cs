@@ -148,7 +148,9 @@ namespace PluginLiberty.API.Utility.EndpointHelperEndpoints
                     do
                     {
                         retryPrescriptions = false;
-                        presciptionsResponse = await apiClient.GetAsync($"/prescriptions?PageSize=100&StartDate={queryDate}&Page={pageNumber}");
+                        presciptionsResponse =
+                            await apiClient.GetAsync(
+                                $"/prescriptions?PageSize=100&StartDate={queryDate}&Page={pageNumber}");
 
                         if (!presciptionsResponse.IsSuccessStatusCode)
                         {
@@ -193,82 +195,92 @@ namespace PluginLiberty.API.Utility.EndpointHelperEndpoints
                                 do
                                 {
                                     retryClaim = false;
-                                    claimResponse = await apiClient.GetAsync($"{ClaimsPath}/{scriptNumber}/{refillNumber}");
+                                    claimResponse =
+                                        await apiClient.GetAsync($"{ClaimsPath}/{scriptNumber}/{refillNumber}");
 
-                                    if(claimResponse.StatusCode == HttpStatusCode.NotFound)
+                                    if (claimResponse.StatusCode == HttpStatusCode.NotFound)
                                     {
                                         continue;
                                     }
-                                        if (!claimResponse.IsSuccessStatusCode)
-                                        {
-                                            var error = JsonConvert.DeserializeObject<ApiError>(await claimResponse.Content
-                                                .ReadAsStringAsync());
-                                            var ex = new Exception(error.Message);
-                                            Logger.Error(ex, "Claim Retry Failed");
-                                            Thread.Sleep(claimRetryCounter * claimRetryCounter * 1000);
-                                            claimRetryCounter++;
-                                            retryClaim = claimRetryCounter < 6;
 
-                                            if (!retryClaim)
-                                            {
-                                                throw ex;
-                                            }
+                                    if (!claimResponse.IsSuccessStatusCode)
+                                    {
+                                        var error = JsonConvert.DeserializeObject<ApiError>(await claimResponse.Content
+                                            .ReadAsStringAsync());
+                                        var ex = new Exception(error.Message);
+                                        Logger.Error(ex, "Claim Retry Failed");
+                                        Thread.Sleep(claimRetryCounter * claimRetryCounter * 1000);
+                                        claimRetryCounter++;
+                                        retryClaim = claimRetryCounter < 6;
+
+                                        if (!retryClaim)
+                                        {
+                                            throw ex;
                                         }
-                                    
+                                    }
                                 } while (retryClaim);
 
-                                var claimsPropertiesResponse =
-                                JsonConvert.DeserializeObject<ClaimsWrapper>(
-                                await claimResponse.Content.ReadAsStringAsync());
-
-                                var recordMap = new Dictionary<string, object>();
-
-
-                                try
+                                if (claimResponse.IsSuccessStatusCode)
                                 {
-                                  
-                                recordMap["ScriptNumber"] = claimsPropertiesResponse.ScriptNumber ?? null;
-                                recordMap["RefillNumber"] = claimsPropertiesResponse.RefillNumber ?? null;
-                                recordMap["DateSubmitted"] = claimsPropertiesResponse.DateSubmitted ?? null;
-                                recordMap["Coverage"] = claimsPropertiesResponse.Coverage ?? null;
-                                recordMap["Type"] = claimsPropertiesResponse.Type ?? null;
-                                recordMap["Status"] = claimsPropertiesResponse.Status ?? null;
-                                recordMap["Message"] = claimsPropertiesResponse.Message ?? null;
-                                recordMap["AuthNumber"] = claimsPropertiesResponse.AuthNumber ?? null;
-                                recordMap["PayorId"] = claimsPropertiesResponse.PayorId ?? null;
-                                recordMap["BIN"] = claimsPropertiesResponse.BIN ?? null ;
-                                recordMap["PCN"] = claimsPropertiesResponse.PCN ?? null;
-                                recordMap["DrugId"] = claimsPropertiesResponse.DrugId ?? null;
-                                recordMap["RequestedACQ"] = claimsPropertiesResponse.RequestedACQ;
-                                recordMap["RequestedCost"] = claimsPropertiesResponse.RequestedCost;
-                                recordMap["RequestedServiceFee"] = claimsPropertiesResponse.RequestedServiceFee;
-                                recordMap["RequestedDispensingFee"] = claimsPropertiesResponse.RequestedDispensingFee;
-                                recordMap["RequestedCopay"] = claimsPropertiesResponse.RequestedCopay;
-                                recordMap["RequestedTax"] = claimsPropertiesResponse.RequestedTax;
-                                recordMap["RequestedIncentive"] = claimsPropertiesResponse.RequestedIncentive;
-                                recordMap["RequestedUC"] = claimsPropertiesResponse.RequestedUC;
-                                recordMap["RequestedTotal"] = claimsPropertiesResponse.RequestedTotal;
-                                recordMap["BasisOfCost"] = claimsPropertiesResponse.BasisOfCost ?? null;
-                                recordMap["RepliedCost"] = claimsPropertiesResponse.RepliedCost;
-                                recordMap["RepliedServiceFee"] = claimsPropertiesResponse.RepliedServiceFee;
-                                recordMap["RepliedDispensingFee"] = claimsPropertiesResponse.RepliedDispensingFee;
-                                recordMap["RepliedCopay"] = claimsPropertiesResponse.RepliedCopay;
-                                recordMap["RepliedTax"] = claimsPropertiesResponse.RepliedTax;
-                                recordMap["RepliedIncentive"] = claimsPropertiesResponse.RepliedIncentive;
-                                recordMap["RepliedTotal"] = claimsPropertiesResponse.RepliedTotal;
-                                recordMap["BasisOfReimbursement"] = claimsPropertiesResponse.BasisOfReimbursement ?? null;
-                                recordMap["OtherPayorAmt"] = claimsPropertiesResponse.OtherPayorAmt;
+                                    var raw = await claimResponse.Content.ReadAsStringAsync();
+                                    var claimsPropertiesResponse =
+                                        JsonConvert.DeserializeObject<List<ClaimsWrapper>>(
+                                            await claimResponse.Content.ReadAsStringAsync());
+
+                                    foreach (var claim in claimsPropertiesResponse)
+                                    {
+                                        var recordMap = new Dictionary<string, object>();
+
+
+                                        try
+                                        {
+                                            recordMap["ScriptNumber"] = claim.ScriptNumber ?? null;
+                                            recordMap["RefillNumber"] = claim.RefillNumber ?? null;
+                                            recordMap["DateSubmitted"] = claim.DateSubmitted ?? null;
+                                            recordMap["Coverage"] = claim.Coverage ?? null;
+                                            recordMap["Type"] = claim.Type ?? null;
+                                            recordMap["Status"] = claim.Status ?? null;
+                                            recordMap["Message"] = claim.Message ?? null;
+                                            recordMap["AuthNumber"] = claim.AuthNumber ?? null;
+                                            recordMap["PayorId"] = claim.PayorId ?? null;
+                                            recordMap["BIN"] = claim.BIN ?? null;
+                                            recordMap["PCN"] = claim.PCN ?? null;
+                                            recordMap["DrugId"] = claim.DrugId ?? null;
+                                            recordMap["RequestedACQ"] = claim.RequestedACQ;
+                                            recordMap["RequestedCost"] = claim.RequestedCost;
+                                            recordMap["RequestedServiceFee"] = claim.RequestedServiceFee;
+                                            recordMap["RequestedDispensingFee"] =
+                                                claim.RequestedDispensingFee;
+                                            recordMap["RequestedCopay"] = claim.RequestedCopay;
+                                            recordMap["RequestedTax"] = claim.RequestedTax;
+                                            recordMap["RequestedIncentive"] = claim.RequestedIncentive;
+                                            recordMap["RequestedUC"] = claim.RequestedUC;
+                                            recordMap["RequestedTotal"] = claim.RequestedTotal;
+                                            recordMap["BasisOfCost"] = claim.BasisOfCost ?? null;
+                                            recordMap["RepliedCost"] = claim.RepliedCost;
+                                            recordMap["RepliedServiceFee"] = claim.RepliedServiceFee;
+                                            recordMap["RepliedDispensingFee"] =
+                                                claim.RepliedDispensingFee;
+                                            recordMap["RepliedCopay"] = claim.RepliedCopay;
+                                            recordMap["RepliedTax"] = claim.RepliedTax;
+                                            recordMap["RepliedIncentive"] = claim.RepliedIncentive;
+                                            recordMap["RepliedTotal"] = claim.RepliedTotal;
+                                            recordMap["BasisOfReimbursement"] =
+                                                claim.BasisOfReimbursement ?? null;
+                                            recordMap["OtherPayorAmt"] = claim.OtherPayorAmt;
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            var debug = e.Message;
+                                        }
+
+                                        yield return new Record
+                                        {
+                                            Action = Record.Types.Action.Upsert,
+                                            DataJson = JsonConvert.SerializeObject(recordMap)
+                                        };
+                                    }
                                 }
-                                catch(Exception e)
-                                {
-                                    var debug = e.Message;
-                                }
-
-                                yield return new Record
-                                {
-                                    Action = Record.Types.Action.Upsert,
-                                    DataJson = JsonConvert.SerializeObject(recordMap)
-                                };
                             }
                         }
                     }
@@ -286,26 +298,26 @@ namespace PluginLiberty.API.Utility.EndpointHelperEndpoints
         public static readonly Dictionary<string, Endpoint> ClaimsEndpoints =
             new Dictionary<string, Endpoint>
             {
+                {
+                    "AllClaims", new ClaimsEndpoint
                     {
-                        "AllClaims", new ClaimsEndpoint
+                        Id = "AllClaims",
+                        ShouldGetStaticSchema = true,
+                        Name = "AllClaims",
+                        BasePath = "https://api.libertysoftware.com",
+                        ScriptRefillPath = $"/prescriptions",
+                        ClaimsPath = $"/claims",
+                        PropertiesPath = "/crm/v3/properties/prescriptions",
+                        SupportedActions = new List<EndpointActions>
                         {
-                            Id = "AllClaims",
-                            ShouldGetStaticSchema = true,
-                            Name = "AllClaims",
-                            BasePath = "https://api.libertysoftware.com",
-                            ScriptRefillPath = $"/prescriptions",
-                            ClaimsPath = $"/claims",
-                            PropertiesPath = "/crm/v3/properties/prescriptions",
-                            SupportedActions = new List<EndpointActions>
-                            {
-                                EndpointActions.Get
-                            },
-                            PropertyKeys = new List<string>
-                            {
-                                "hs_unique_creation_key"
-                            }
+                            EndpointActions.Get
+                        },
+                        PropertyKeys = new List<string>
+                        {
+                            "hs_unique_creation_key"
                         }
-                    },
+                    }
+                },
             };
     }
 }
