@@ -118,55 +118,55 @@ namespace PluginLiberty.DataContracts
         public string? BasisOfReimbursement { get; set; }
 
         [JsonProperty("RequestedACQ")]
-        public float RequestedACQ { get; set; }
+        public string? RequestedACQ { get; set; }
 
         [JsonProperty("RequestedCost")]
-        public float RequestedCost { get; set; }
+        public string? RequestedCost { get; set; }
 
         [JsonProperty("RequestedServiceFee")]
-        public float RequestedServiceFee { get; set; }
+        public string? RequestedServiceFee { get; set; }
 
         [JsonProperty("RequestedDispensingFee")]
-        public float RequestedDispensingFee { get; set; }
+        public string? RequestedDispensingFee { get; set; }
 
         [JsonProperty("RequestedCopay")]
-        public float RequestedCopay { get; set; }
+        public string? RequestedCopay { get; set; }
 
         [JsonProperty("RequestedTax")]
-        public float RequestedTax { get; set; }
+        public string? RequestedTax { get; set; }
 
         [JsonProperty("RequestedIncentive")]
-        public float RequestedIncentive { get; set; }
+        public string? RequestedIncentive { get; set; }
 
         [JsonProperty("RequestedUC")]
-        public float RequestedUC { get; set; }
+        public string? RequestedUC { get; set; }
 
         [JsonProperty("RequestedTotal")]
-        public float RequestedTotal { get; set; }
+        public string? RequestedTotal { get; set; }
 
         [JsonProperty("RepliedCost")]
-        public float RepliedCost { get; set; }
+        public string? RepliedCost { get; set; }
 
         [JsonProperty("RepliedServiceFee")]
-        public float RepliedServiceFee { get; set; }
+        public string? RepliedServiceFee { get; set; }
 
         [JsonProperty("RepliedDispensingFee")]
-        public float RepliedDispensingFee { get; set; }
+        public string? RepliedDispensingFee { get; set; }
 
         [JsonProperty("RepliedCopay")]
-        public float RepliedCopay { get; set; }
+        public string? RepliedCopay { get; set; }
 
         [JsonProperty("RepliedTax")]
-        public float RepliedTax { get; set; }
+        public string? RepliedTax { get; set; }
 
         [JsonProperty("RepliedIncentive")]
-        public float RepliedIncentive { get; set; }
+        public string? RepliedIncentive { get; set; }
 
         [JsonProperty("RepliedTotal")]
-        public float RepliedTotal { get; set; }
+        public string? RepliedTotal { get; set; }
 
         [JsonProperty("OtherPayorAmt")]
-        public float OtherPayorAmt { get; set; }
+        public string? OtherPayorAmt { get; set; }
     
     }
     

@@ -69,15 +69,11 @@ namespace PluginLiberty.API.Utility.EndpointHelperEndpoints
                     switch (staticProperty)
                     {
                         case ("ScriptNumber"):
-                            property.Type = PropertyType.Integer;
+                            property.Type = PropertyType.String;
                             property.IsKey = true;
-                            property.TypeAtSource = "integer";
+                            property.TypeAtSource = "string";
                             break;
                         case ("RefillNumber"):
-                            property.Type = PropertyType.Integer;
-                            property.IsKey = false;
-                            property.TypeAtSource = "integer";
-                            break;
                         case ("DateSubmitted"):
                         case ("Coverage"):
                         case ("Type"):
@@ -90,10 +86,6 @@ namespace PluginLiberty.API.Utility.EndpointHelperEndpoints
                         case ("DrugId"):
                         case ("BasisOfCost"):
                         case ("BasisOfReimbursement"):
-                            property.Type = PropertyType.String;
-                            property.IsKey = false;
-                            property.TypeAtSource = "string";
-                            break;
                         case ("RequestedACQ"):
                         case ("RequestedCost"):
                         case ("RequestedServiceFee"):
@@ -111,9 +103,9 @@ namespace PluginLiberty.API.Utility.EndpointHelperEndpoints
                         case ("RepliedIncentive"):
                         case ("RepliedTotal"):
                         case ("OtherPayorAmt"):
-                            property.Type = PropertyType.Float;
+                            property.Type = PropertyType.String;
                             property.IsKey = false;
-                            property.TypeAtSource = "float";
+                            property.TypeAtSource = "string";
                             break;
                         default:
                             property.IsKey = false;
@@ -234,40 +226,99 @@ namespace PluginLiberty.API.Utility.EndpointHelperEndpoints
 
                                         try
                                         {
-                                            recordMap["ScriptNumber"] = claim.ScriptNumber ?? null;
-                                            recordMap["RefillNumber"] = claim.RefillNumber ?? null;
-                                            recordMap["DateSubmitted"] = claim.DateSubmitted ?? null;
-                                            recordMap["Coverage"] = claim.Coverage ?? null;
-                                            recordMap["Type"] = claim.Type ?? null;
-                                            recordMap["Status"] = claim.Status ?? null;
-                                            recordMap["Message"] = claim.Message ?? null;
-                                            recordMap["AuthNumber"] = claim.AuthNumber ?? null;
-                                            recordMap["PayorId"] = claim.PayorId ?? null;
-                                            recordMap["BIN"] = claim.BIN ?? null;
-                                            recordMap["PCN"] = claim.PCN ?? null;
-                                            recordMap["DrugId"] = claim.DrugId ?? null;
-                                            recordMap["RequestedACQ"] = claim.RequestedACQ;
-                                            recordMap["RequestedCost"] = claim.RequestedCost;
-                                            recordMap["RequestedServiceFee"] = claim.RequestedServiceFee;
-                                            recordMap["RequestedDispensingFee"] =
-                                                claim.RequestedDispensingFee;
-                                            recordMap["RequestedCopay"] = claim.RequestedCopay;
-                                            recordMap["RequestedTax"] = claim.RequestedTax;
-                                            recordMap["RequestedIncentive"] = claim.RequestedIncentive;
-                                            recordMap["RequestedUC"] = claim.RequestedUC;
-                                            recordMap["RequestedTotal"] = claim.RequestedTotal;
-                                            recordMap["BasisOfCost"] = claim.BasisOfCost ?? null;
-                                            recordMap["RepliedCost"] = claim.RepliedCost;
-                                            recordMap["RepliedServiceFee"] = claim.RepliedServiceFee;
-                                            recordMap["RepliedDispensingFee"] =
-                                                claim.RepliedDispensingFee;
-                                            recordMap["RepliedCopay"] = claim.RepliedCopay;
-                                            recordMap["RepliedTax"] = claim.RepliedTax;
-                                            recordMap["RepliedIncentive"] = claim.RepliedIncentive;
-                                            recordMap["RepliedTotal"] = claim.RepliedTotal;
-                                            recordMap["BasisOfReimbursement"] =
-                                                claim.BasisOfReimbursement ?? null;
-                                            recordMap["OtherPayorAmt"] = claim.OtherPayorAmt;
+                                            recordMap["ScriptNumber"] = claim.ScriptNumber != null
+                                                ? claim.ScriptNumber.ToString()
+                                                : "null";
+                                            recordMap["RefillNumber"] = claim.RefillNumber != null
+                                                ? claim.RefillNumber.ToString()
+                                                : "null";
+                                            recordMap["DateSubmitted"] = claim.DateSubmitted != null
+                                                ? claim.DateSubmitted.ToString()
+                                                : "null";
+                                            recordMap["Coverage"] = claim.Coverage != null
+                                                ? claim.Coverage.ToString()
+                                                : "null";
+                                            recordMap["Type"] = claim.Type != null
+                                                ? claim.Type.ToString()
+                                                : "null";
+                                            recordMap["Status"] = claim.Status!= null
+                                                ? claim.Status.ToString()
+                                                : "null";
+                                            recordMap["Message"] = claim.Message != null
+                                                ? claim.Message.ToString()
+                                                : "null";
+                                            recordMap["AuthNumber"] = claim.AuthNumber != null
+                                                ? claim.AuthNumber.ToString()
+                                                : "null";
+                                            recordMap["PayorId"] = claim.PayorId != null
+                                                ? claim.PayorId.ToString()
+                                                : "null";
+                                            recordMap["BIN"] = claim.BIN != null
+                                                ? claim.BIN.ToString()
+                                                : "null";
+                                            recordMap["PCN"] = claim.PCN != null
+                                                ? claim.PCN.ToString()
+                                                : "null";
+                                            recordMap["DrugId"] = claim.DrugId != null
+                                                ? claim.DrugId.ToString()
+                                                : "null";
+                                            recordMap["RequestedACQ"] = claim.RequestedACQ != null
+                                                ? claim.RequestedACQ.ToString()
+                                                : "null";
+                                            recordMap["RequestedCost"] = claim.RequestedCost!= null
+                                                ? claim.RequestedCost.ToString()
+                                                : "null";
+                                            recordMap["RequestedServiceFee"] = claim.RequestedServiceFee != null
+                                                ? claim.RequestedServiceFee.ToString()
+                                                : "null";
+                                            recordMap["RequestedDispensingFee"] = claim.RequestedDispensingFee != null
+                                                ? claim.RequestedDispensingFee.ToString()
+                                                : "null";
+                                            recordMap["RequestedCopay"] = claim.RequestedCopay != null
+                                                ? claim.RequestedCopay.ToString()
+                                                : "null";
+                                            recordMap["RequestedTax"] = claim.RequestedTax != null
+                                                ? claim.RequestedTax.ToString()
+                                                : "null";
+                                            recordMap["RequestedIncentive"] = claim.RequestedIncentive != null
+                                                ? claim.RequestedIncentive.ToString()
+                                                : "null";
+                                            recordMap["RequestedUC"] = claim.RequestedUC != null
+                                                ? claim.RequestedUC.ToString()
+                                                : "null";
+                                            recordMap["RequestedTotal"] = claim.RequestedTotal!= null
+                                                ? claim.RequestedTotal.ToString()
+                                                : "null";
+                                            recordMap["BasisOfCost"] = claim.BasisOfCost != null
+                                                ? claim.BasisOfCost.ToString()
+                                                : "null";
+                                            recordMap["RepliedCost"] = claim.RepliedCost != null
+                                                ? claim.RepliedCost.ToString()
+                                                : "null";
+                                            recordMap["RepliedServiceFee"] = claim.RepliedServiceFee != null
+                                                ? claim.RepliedServiceFee.ToString()
+                                                : "null";
+                                            recordMap["RepliedDispensingFee"] = claim.RepliedDispensingFee != null
+                                                ? claim.RepliedDispensingFee.ToString()
+                                                : "null";
+                                            recordMap["RepliedCopay"] = claim.RepliedCopay!= null
+                                                ? claim.RepliedCopay.ToString()
+                                                : "null";
+                                            recordMap["RepliedTax"] = claim.RepliedTax != null
+                                                ? claim.RepliedTax.ToString()
+                                                : "null";
+                                            recordMap["RepliedIncentive"] = claim.RepliedIncentive!= null
+                                                ? claim.RepliedIncentive.ToString()
+                                                : "null";
+                                            recordMap["RepliedTotal"] = claim.RepliedTotal != null
+                                                ? claim.RepliedTotal.ToString()
+                                                : "null";
+                                            recordMap["BasisOfReimbursement"] = claim.BasisOfReimbursement != null
+                                                ? claim.BasisOfReimbursement.ToString()
+                                                : "null";
+                                            recordMap["OtherPayorAmt"] = claim.OtherPayorAmt != null
+                                                ? claim.OtherPayorAmt.ToString()
+                                                : "null";
                                         }
                                         catch (Exception e)
                                         {
